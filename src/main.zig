@@ -18,5 +18,28 @@ pub fn main() !void {
     }
     while (true) {
         std.debug.print("Running DDWM", .{});
+        if (c.XPending(xlib.display) <= 0) {
+            continue;
+        }
+
+        const e: c.XEvent = std.mem.zeroes(c.XEvent);
+        _ = c.XNextEvent(xlib.display, &e);
+
+        switch (e.type) {
+            c.KeyPress => onKeyPress(xlib.display, &e),
+            else => continue,
+        }
+    }
+}
+
+fn onKeyPress(display: c.Display, e: *c.XEvent) void {
+    const event = e.xkey;
+    const keysym = c.XKeycodeToKeysym(display, @intCast(event.keycode), 0);
+
+    for (config.keys) |key| {
+        if (event.state == key.modifier and keysym == key.code) {
+            key.action();
+            break;
+        }
     }
 }
