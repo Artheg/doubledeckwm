@@ -23,7 +23,16 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+    exe.addIncludePath(.{ .path = "/usr/include" });
+    exe.linkSystemLibrary("c");
+    exe.linkSystemLibrary("x11");
+    // exe.linkSystemLibrary("xinerama");
+    // exe.linkSystemLibrary("freetype");
+    // exe.linkSystemLibrary("Xft");
 
+    // exe.addLibraryPath("/usr/local/lib");
+    // exe.addIncludePath("/usr/local/include");
+    // exe.linkSystemLibrary("X11");
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
     // step when running `zig build`).
