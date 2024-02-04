@@ -11,18 +11,17 @@ pub fn main() !void {
     //     std.debug.print("No display", .{});
     //     std.os.exit(1);
     // }
-    std.debug.print("Running DDWM", .{});
+    // std.debug.print("Running DDWM\n\n", .{});
     for (config.keys) |key| {
         const code = c.XKeysymToKeycode(xlib.display, key.code);
         _ = c.XGrabKey(xlib.display, code, key.modifier, xlib.root, 1, c.GrabModeAsync, c.GrabModeAsync);
     }
     while (true) {
-        std.debug.print("Running DDWM", .{});
         if (c.XPending(xlib.display) <= 0) {
             continue;
         }
 
-        const e: c.XEvent = std.mem.zeroes(c.XEvent);
+        var e: c.XEvent = std.mem.zeroes(c.XEvent);
         _ = c.XNextEvent(xlib.display, &e);
 
         switch (e.type) {
@@ -32,7 +31,7 @@ pub fn main() !void {
     }
 }
 
-fn onKeyPress(display: c.Display, e: *c.XEvent) void {
+fn onKeyPress(display: *c.Display, e: *c.XEvent) void {
     const event = e.xkey;
     const keysym = c.XKeycodeToKeysym(display, @intCast(event.keycode), 0);
 
