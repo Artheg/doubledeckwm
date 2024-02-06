@@ -3,8 +3,7 @@ const c = @import("c.zig");
 const config = @import("config.zig");
 const x = @import("x.zig");
 
-
-pub const Deck = struct{};
+pub const Deck = struct {};
 pub const Workspace = struct {};
 pub const Screen = struct {};
 // Screen -> Workspaces -> Decks -> Windows
@@ -14,6 +13,7 @@ pub const Screen = struct {};
 
 pub fn main() !void {
     const xlib = x.Xlib.init();
+    std.debug.print("starting doubledeckwm\n", .{});
     for (config.keys) |key| {
         const code = c.XKeysymToKeycode(xlib.display, key.code);
         _ = c.XGrabKey(xlib.display, code, key.modifier, xlib.root, 1, c.GrabModeAsync, c.GrabModeAsync);
@@ -28,7 +28,7 @@ pub fn main() !void {
 
         switch (e.type) {
             c.KeyPress => onKeyPress(xlib.display, &e),
-            else => continue,
+            else => std.debug.print("{}\n", .{e}),
         }
     }
 }
@@ -39,7 +39,10 @@ fn onKeyPress(display: *c.Display, e: *c.XEvent) void {
 
     for (config.keys) |key| {
         if (event.state == key.modifier and keysym == key.code) {
-            key.action(key.arg);
+            switch (key.action) {
+                .withArg => key.action.withArg(key.arg.?),
+                .noArg => key.action.noArg(),
+            }
             break;
         }
     }
