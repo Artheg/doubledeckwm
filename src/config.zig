@@ -21,6 +21,7 @@ pub const keys = [_]ActionDef{
     ActionDef{ .modifier = c.Mod4Mask | c.ShiftMask, .code = c.XK_c, .action = ActionFunc{ .noArg = closeWindow }, .arg = null },
     spawnWithMod(c.XK_space, "rofi -show combi -modes combi -combi-modes \"window,drun,run\""),
     spawnWithMod(c.XK_Return, "st"),
+    spawnWithMod(c.XK_p, "power"),
 };
 
 fn closeWindow() void {
